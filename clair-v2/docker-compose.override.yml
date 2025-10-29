@@ -1,0 +1,10 @@
+services:
+  clair:
+    volumes:
+      - /opt/registry/certs/localhost.crt:/usr/local/share/ca-certificates/registry.crt:ro
+    entrypoint: ["/bin/sh","-lc"]
+    command:
+      - >
+        apk add --no-cache ca-certificates >/dev/null 2>&1 || true;
+        update-ca-certificates || true;
+        exec /clair -config=/config/config.yaml

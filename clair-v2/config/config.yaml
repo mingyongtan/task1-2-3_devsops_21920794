@@ -1,0 +1,13 @@
+clair:
+  database:
+    type: pgsql
+    options:
+      source: host=172.22.0.2 port=5432 user=postgres dbname=clair6000 sslmode=disable statement_timeout=120000
+      cachesize: 32768
+  api:
+    port: 6060
+    healthport: 6061
+  updater:
+    interval: 999h
+  notifier:
+    enabled: false

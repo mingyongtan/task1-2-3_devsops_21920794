@@ -1,0 +1,13 @@
+clair:
+  database:
+    type: pgsql
+    options:
+      source: postgresql://clair:clairpass@postgres:5432/clair?sslmode=disable
+      cachesize: 16384
+  api:
+    port: 6060
+    healthport: 6060
+    timeout: 900s
+    paginationkey: SOME-32-CHAR-PAGINATION-KEY-123456
+  updater:
+    interval: 24h

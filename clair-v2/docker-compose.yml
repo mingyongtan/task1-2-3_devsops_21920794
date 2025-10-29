@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: clair-v2-postgres-1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: clair6000
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d clair6000 -h 127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      clairnet:
+        aliases: ["postgres"]   # <- guarantees the name inside the network
+
+  clair:
+    image: arminc/clair-local-scan:v2.0.6
+    container_name: clair-v2-clair-1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./config:/config:ro
+    entrypoint: ["/clair"]
+    command: ["-config=/config/config.yaml"]
+    ports:
+      - "6063:6060"
+      - "6064:6061"
+    restart: unless-stopped
+    networks:
+      clairnet: {}
+
+volumes:
+  pgdata:
+
+networks:
+  clairnet:
+    driver: bridge
